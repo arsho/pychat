@@ -59,7 +59,7 @@ The following steps can be done using Git Shell(Windows) or Ubuntu terminal.
 * Add `Youtube` URL if any.
 * Add `Image` in `screenshot` folder and add the url like `dummy screenshot` below:
 Dummy Screenshot: 
-![alt dummy](https://raw.githubusercontent.com/arsho/pychat/master/screenshot/dummmy.png)
+![alt dummy](https://raw.githubusercontent.com/arsho/pychat/master/screenshot/dummy.png)
 
 
 ### Modification Needed ###
