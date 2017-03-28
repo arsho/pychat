@@ -47,6 +47,7 @@ The following steps can be done using Git Shell(Windows) or Ubuntu terminal.
 * `git push -u origin master`
 
 ### Run the program
+
 * Run as usual python program `python main.py`
 * In one computer click on server then connect and make any wanted port
 * In the other computer click on client then connect type in the port then the ip adress of the computer that is the server
