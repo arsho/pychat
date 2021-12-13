@@ -544,7 +544,20 @@ def processUserText(event):
         params = data[data.find(" ") + 1:].split(" ")
         processUserCommands(command, params)
     text_input.delete(0, END)
+
+def processUserTextHighlight(event):
+    """Takes text from text bar input and highlights entry if it
+    begins with '/'.
  
+    """
+    data = text_input.get()
+    if len(data)>0:
+        if data[0] != "/":  # is not a command
+            text_input.config(background="#ffffff")
+        else:
+            text_input.config(background="#ffdfcf")
+    else: # there is no any text
+        text_input.config(background="#ffffff")
  
 def processUserInput(text):
     """ClI version of processUserText."""
@@ -837,6 +850,7 @@ else:
  
     text_input = Entry(root, width=60)
     text_input.bind("<Return>", processUserText)
+    text_input.bind("<KeyRelease>", processUserTextHighlight)
     text_input.pack()
  
     statusConnect = StringVar()
