@@ -23,6 +23,7 @@ import math
  
  
 # GLOBALS
+commands = ["nick","connect","disconnect","host"]
 conn_array = []  # stores open sockets
 secret_array = dict()  # key: the open sockets in conn_array,
                         # value: integers for encryption
@@ -35,7 +36,9 @@ username = "Self"
 location = 0
 port = 0
 top = ""
- 
+
+is_hinted=False
+
 main_body_text = 0
 #-GLOBALS-
  
@@ -545,20 +548,42 @@ def processUserText(event):
         processUserCommands(command, params)
     text_input.delete(0, END)
 
+
+
 def processUserTextHighlight(event):
     """Takes text from text bar input and highlights entry if it
     begins with '/'.
  
     """
+    global is_hinted
     data = text_input.get()
     if len(data)>0:
         if data[0] != "/":  # is not a command
-            text_input.config(background="#ffffff")
+                text_input.config(background="#ffffff")
         else:
             text_input.config(background="#ffdfcf")
     else: # there is no any text
         text_input.config(background="#ffffff")
+    if len(data)==1 and not is_hinted:
+            if data[0] == "/":  # is not a command
+                showCommandHint()
+                is_hinted=True
+    if len(data)==0:
+        is_hinted=False
+
+def showCommandHint():
+    """When this function invoked a popup will have shown to user
+    that contains list of commands
  
+    """
+    try:
+        popup.tk_popup(text_input.winfo_rootx(),text_input.winfo_rooty())
+    finally:
+        popup.grab_release()
+
+def complete(index,array):
+    text_input.insert(1,array[index])
+
 def processUserInput(text):
     """ClI version of processUserText."""
     if text[0] != "/":
@@ -853,6 +878,14 @@ else:
     text_input.bind("<KeyRelease>", processUserTextHighlight)
     text_input.pack()
  
+    #create hint popup
+    popup = Menu(root,tearoff=0)
+    popup.add_command(label=commands[0],command=lambda:complete(0,commands))
+    popup.add_command(label=commands[1],command=lambda:complete(1,commands))
+    popup.add_command(label=commands[2],command=lambda:complete(2,commands))
+    popup.add_command(label=commands[3],command=lambda:complete(3,commands))
+        
+
     statusConnect = StringVar()
     statusConnect.set("Connect")
     clientType = 1
