@@ -39,6 +39,10 @@ Client user (Bob)<br>
 
 ![alt Pychat demo](https://raw.githubusercontent.com/arsho/pychat/master/screenshot/client.png)
 
+### Command suggestion ###
+
+![alt Pychat demo](./screenshot/set_nickname.gif)
+
 ### Modification Needed ###
 
 * Font should be resized.
