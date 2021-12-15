@@ -121,10 +121,7 @@ def processUserCommands(command, param ,parent):
     if command == "nick":  # change nickname
         for letter in param[0]:
             if letter == " " or letter == "\n":
-                if isCLI:
-                    error_window(0, "Invalid username. No spaces allowed.")
-                else:
-                    error_window(root, "Invalid username. No spaces allowed.")
+                error_window(parent, "Invalid username. No spaces allowed.")
                 return
         if isUsernameFree(param[0]):
             parent.writeToScreen("Username is being changed to " + param[0], "System")
@@ -140,10 +137,10 @@ def processUserCommands(command, param ,parent):
             conn.send("-001".encode())
         parent.processFlag("-001")
     if command == "connect":  # connects to passed in host port
-        if(options_sanitation(param[1], param[0])):
+        if(options_sanitation(parent,param[1], param[0])):
             Client(param[0], int(param[1]),parent).start()
     if command == "host":  # starts server on passed in port
-        if(options_sanitation(param[0])):
+        if(options_sanitation(parent,param[0])):
             Server(int(param[0]),parent).start()
 
 
@@ -178,7 +175,7 @@ def passFriends(conn):
 
 def client_options_go(dest, port, window,parent):
     "Processes the options entered by the user in the client options window."""
-    if options_sanitation(port, dest):
+    if options_sanitation(parent,port, dest):
         if not isCLI:
             window.destroy()
         Client(dest, int(port),parent).start()
@@ -186,25 +183,22 @@ def client_options_go(dest, port, window,parent):
         sys.exit(1)
 
 
-def options_sanitation(por, loc=""):
+def options_sanitation(parent,por, loc=""):
     """Checks to make sure the port and destination ip are both valid.
     Launches error windows if there are any issues.
 
     """
-    global root
     if version == 2:
         por = unicode(por)
-    if isCLI:
-        root = 0
     if not por.isdigit():
-        error_window(root, "Please input a port number.")
+        error_window(parent, "Please input a port number.")
         return False
     if int(por) < 0 or 65555 < int(por):
-        error_window(root, "Please input a port number between 0 and 65555")
+        error_window(parent, "Please input a port number between 0 and 65555")
         return False
     if loc != "":
         if not ip_process(loc.split(".")):
-            error_window(root, "Please input a valid ip address.")
+            error_window(parent, "Please input a valid ip address.")
             return False
     return True
 
@@ -222,24 +216,6 @@ def ip_process(ipArray):
         if t < 0 or 255 < t:
             return False
     return True
-
-# ------------------------------------------------------------------------------
-
-
-def server_options_go(port, window):
-    """Processes the options entered by the user in the
-    server options window.
-
-    """
-    if options_sanitation(port):
-        if not isCLI:
-            window.destroy()
-        Server(int(port)).start()
-    elif isCLI:
-        sys.exit(1)
-
-# -------------------------------------------------------------------------
-
 
 def username_options_window(master):
     """Launches username options window for setting username."""
@@ -280,93 +256,6 @@ def error_window(master, texty):
         go.pack()
         go.focus_set()
 
-
-# -----------------------------------------------------------------------------
-# Contacts window
-
-
-def contacts_window(master):
-    """Displays the contacts window, allowing the user to select a recent
-    connection to reuse.
-
-    """
-    global contact_array
-    cWindow = Toplevel(master)
-    cWindow.title("Contacts")
-    cWindow.grab_set()
-    scrollbar = Scrollbar(cWindow, orient=VERTICAL)
-    listbox = Listbox(cWindow, yscrollcommand=scrollbar.set)
-    scrollbar.config(command=listbox.yview)
-    scrollbar.pack(side=RIGHT, fill=Y)
-    buttons = Frame(cWindow)
-    cBut = Button(buttons, text="Connect",
-                  command=lambda: contacts_connect(
-                      listbox.get(ACTIVE).split(" ")))
-    cBut.pack(side=LEFT)
-    dBut = Button(buttons, text="Remove",
-                  command=lambda: contacts_remove(
-                      listbox.get(ACTIVE).split(" "), listbox))
-    dBut.pack(side=LEFT)
-    aBut = Button(buttons, text="Add",
-                  command=lambda: contacts_add(listbox, cWindow))
-    aBut.pack(side=LEFT)
-    buttons.pack(side=BOTTOM)
-
-    for person in contact_array:
-        listbox.insert(END, contact_array[person][1] + " " +
-                       person + " " + contact_array[person][0])
-    listbox.pack(side=LEFT, fill=BOTH, expand=1)
-
-
-def contacts_connect(item):
-    """Establish a connection between two contacts."""
-    Client(item[1], int(item[2])).start()
-
-
-def contacts_remove(item, listbox):
-    """Remove a contact."""
-    if listbox.size() != 0:
-        listbox.delete(ACTIVE)
-        global contact_array
-        h = contact_array.pop(item[1])
-
-
-def contacts_add(listbox, master):
-    """Add a contact."""
-    aWindow = Toplevel(master)
-    aWindow.title("Contact add")
-    Label(aWindow, text="Username:").grid(row=0)
-    name = Entry(aWindow)
-    name.focus_set()
-    name.grid(row=0, column=1)
-    Label(aWindow, text="IP:").grid(row=1)
-    ip = Entry(aWindow)
-    ip.grid(row=1, column=1)
-    Label(aWindow, text="Port:").grid(row=2)
-    port = Entry(aWindow)
-    port.grid(row=2, column=1)
-    go = Button(aWindow, text="Add", command=lambda:
-                contacts_add_helper(name.get(), ip.get(), port.get(),
-                                    aWindow, listbox))
-    go.grid(row=3, column=1)
-
-
-def contacts_add_helper(username, ip, port, window, listbox):
-    """Contact adding helper function. Recognizes invalid usernames and
-    adds contact to listbox and contact_array.
-
-    """
-    for letter in username:
-        if letter == " " or letter == "\n":
-            error_window(root, "Invalid username. No spaces allowed.")
-            return
-    if options_sanitation(port, ip):
-        listbox.insert(END, username + " " + ip + " " + port)
-        contact_array[ip] = [port, username]
-        window.destroy()
-        return
-
-
 def load_contacts():
     """Loads the recent chats out of the persistent file contacts.dat."""
     global contact_array
@@ -395,6 +284,10 @@ def dump_contacts():
             contact + " " + str(contact_array[contact][0]) + " " +
             contact_array[contact][1] + "\n")
     filehandle.close()
+
+def contacts_connect(parent,item):
+    """Establish a connection between two contacts."""
+    Client(item[1], int(item[2]),parent).start()
 
 class Server (threading.Thread):
     "A class for a Server instance."""
@@ -550,10 +443,6 @@ class Client (threading.Thread):
         # Server(self.port).start()
         # ##########################################################################THIS
         # IS GOOD, BUT I CAN'T TEST ON ONE MACHINE
-
-
-# -------------------------------------------------------------------------
-
 
 
 def QuickServer(parent):
