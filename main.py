@@ -1,32 +1,5 @@
-from imports import *
+from Header import *
 
-if len(sys.argv) > 1 and sys.argv[1] == "-cli":
-    print("Starting command line chat")
-    isCLI = True
-else:
-    isCLI = False
- 
- 
-# GLOBALS
-commands = ["nick","connect","disconnect","host"]
-conn_array = []  # stores open sockets
-secret_array = dict()  # key: the open sockets in conn_array,
-                        # value: integers for encryption
-username_array = dict()  # key: the open sockets in conn_array,
-                        # value: usernames for the connection
-contact_array = dict()  # key: ip address as a string, value: [port, username]
- 
-username = "Self"
- 
-location = 0
-port = 0
-top = ""
-
-is_hinted=False
-
-main_body_text = 0
-#-GLOBALS-
- 
 # So,
    #  x_encode your message with the key, then pass that to
    #  refract to get a string out of it.
