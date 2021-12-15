@@ -7,6 +7,7 @@ class Gui(Tk):
         super().__init__()
         self.title(strProgramName)
         self.mbMain = Menu(self)
+        self.frmContacts = Frame(self,height=20, width=10)
         self.frmMain = Frame(self, height=20, width=50)
         self.createMenus()
         self.txtChat = Text(self.frmMain)
@@ -16,6 +17,8 @@ class Gui(Tk):
         self.txtChat.pack(side=LEFT, fill=Y)
         self.scrlbChat.config(command=self.txtChat.yview)
         self.txtChat.config(yscrollcommand=self.scrlbChat.set)
+        self.contacts_window()
+        self.frmContacts.pack(side=RIGHT)
         self.frmMain.pack()
         self.txtChat.insert(END, "Welcome to the chat program!")
         self.txtChat.config(state=DISABLED)
@@ -39,8 +42,6 @@ class Gui(Tk):
         self.createConnectionMenu()
         self.createServerMenu()
         self.createHintPopup()
-        self.mbMain.add_command(
-            label="Contacts", command=lambda: Utils.contacts_window(self))
         self.config(menu=self.mbMain)
 
     def createFileMenu(self):
@@ -170,9 +171,11 @@ class Gui(Tk):
         go = Button(top, text="Connect", command=lambda:
                     Utils.client_options_go(location.get(), port.get(), top,self))
         go.grid(row=2, column=1)
+    
     def optionDelete(self,window):
         self.connector.config(state=NORMAL)
         window.destroy()
+    
     def server_options_window(self):
         """Launches server options window for getting port."""
         top = Toplevel(self)
@@ -184,8 +187,8 @@ class Gui(Tk):
         port.grid(row=0, column=1)
         port.focus_set()
         go = Button(top, text="Launch", command=lambda:
-                    Utils.server_options_go(port.get(), top))
-        go.grid(row=1, column=1)
+                    self.server_options_go(port.get(), top))
+        go.grid(row=1, column=1)  
     def connects(self,clientType):
         global conn_array
         self.connector.config(state=DISABLED)
@@ -198,7 +201,7 @@ class Gui(Tk):
             # connector.config(state=NORMAL)
             for connection in conn_array:
                 connection.send("-001".encode())
-            self.processFlag("-001")
+            self.processFlag("-001")  
     def processFlag(self,number, conn=None):
         """Process the flag corresponding to number, using open socket conn
         if necessary.
@@ -247,3 +250,76 @@ class Gui(Tk):
             data = Utils.netCatch(self,conn, secret)
             if data != 1:
                 self.writeToScreen(data, username_array[conn])
+    def contacts_window(self):
+        """Displays the contacts window, allowing the user to select a recent
+        connection to reuse.
+        """
+        global contact_array
+        scrollbar = Scrollbar(self.frmContacts, orient=VERTICAL)
+        listbox = Listbox(self.frmContacts, yscrollcommand=scrollbar.set)
+        scrollbar.config(command=listbox.yview)
+        scrollbar.pack(side=RIGHT, fill=Y)
+        buttons = Frame(self.frmContacts)
+        cBut = Button(buttons, text="Connect",
+                      command=lambda: Utils.contacts_connect(
+                          self,listbox.get(ACTIVE).split(" ")))
+        cBut.pack(side=LEFT)
+        dBut = Button(buttons, text="Remove",
+                      command=lambda: self.contacts_remove(
+                          listbox.get(ACTIVE).split(" "), listbox))
+        dBut.pack(side=LEFT)
+        aBut = Button(buttons, text="Add",
+                      command=lambda: self.contacts_add(listbox))
+        aBut.pack(side=LEFT)
+        buttons.pack(side=BOTTOM)
+        for person in contact_array:
+            listbox.insert(END, contact_array[person][1] + " " +
+                           person + " " + contact_array[person][0])
+        listbox.pack(side=LEFT, fill=BOTH, expand=1)
+    def contacts_remove(self,item, listbox):
+        """Remove a contact."""
+        if listbox.size() != 0:
+            listbox.delete(ACTIVE)
+            global contact_array
+            h = contact_array.pop(item[1])
+    def contacts_add(self,listbox):
+        """Add a contact."""
+        aWindow = Toplevel(self)
+        aWindow.title("Contact add")
+        Label(aWindow, text="Username:").grid(row=0)
+        name = Entry(aWindow)
+        name.focus_set()
+        name.grid(row=0, column=1)
+        Label(aWindow, text="IP:").grid(row=1)
+        ip = Entry(aWindow)
+        ip.grid(row=1, column=1)
+        Label(aWindow, text="Port:").grid(row=2)
+        port = Entry(aWindow)
+        port.grid(row=2, column=1)
+        go = Button(aWindow, text="Add", command=lambda:
+                    self.contacts_add_helper(name.get(), ip.get(), port.get(),
+                                        aWindow, listbox))
+        go.grid(row=3, column=1)
+    def contacts_add_helper(self,username, ip, port, window, listbox):
+        """Contact adding helper function. Recognizes invalid usernames and
+        adds contact to listbox and contact_array.
+        """
+        for letter in username:
+            if letter == " " or letter == "\n":
+                Utils.error_window(self, "Invalid username. No spaces allowed.")
+                return
+        if Utils.options_sanitation(self,port, ip):
+            listbox.insert(END, username + " " + ip + " " + port)
+            contact_array[ip] = [port, username]
+            window.destroy()
+            return
+    def server_options_go(self,port, window):
+        """Processes the options entered by the user in the
+        server options window.
+        """
+        if Utils.options_sanitation(self,port):
+            if not isCLI:
+                window.destroy()
+            Utils.Server(int(port)).start()
+        elif isCLI:
+            sys.exit(1)
