@@ -1,25 +1,10 @@
-import sys
-if not sys.hexversion > 0x03000000:
-    version = 2
-else:
-    version = 3
+from imports import *
+
 if len(sys.argv) > 1 and sys.argv[1] == "-cli":
     print("Starting command line chat")
     isCLI = True
 else:
     isCLI = False
- 
- 
-if version == 2:
-    from Tkinter import *
-    from tkFileDialog import asksaveasfilename
-if version == 3:
-    from tkinter import *
-    from tkinter.filedialog import asksaveasfilename
-import threading
-import socket
-import random
-import math
  
  
 # GLOBALS
