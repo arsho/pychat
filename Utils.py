@@ -4,6 +4,7 @@ from Header import *
 #  refract to get a string out of it.
 # To decrypt, pass the message back to x_encode, and then back to refract
 
+contact_array = dict()
 
 def binWord(word):
     """Converts the string into binary."""
@@ -173,7 +174,7 @@ def passFriends(conn):
 
 
 
-def client_options_go(dest, port, window,parent):
+def client_options_go(dest, port, window:Toplevel,parent):
     "Processes the options entered by the user in the client options window."""
     if options_sanitation(parent,port, dest):
         if not isCLI:
@@ -260,30 +261,27 @@ def load_contacts():
     """Loads the recent chats out of the persistent file contacts.dat."""
     global contact_array
     try:
-        filehandle = open("data\\contacts.dat", "r")
+        db_mLANChat = LANChatDB()
     except IOError:
+        print("cannot open dbs/LANChat.db")
         return
-    line = filehandle.readline()
-    while len(line) != 0:
-        temp = (line.rstrip('\n')).split(" ")  # format: ip, port, name
-        contact_array[temp[0]] = temp[1:]
-        line = filehandle.readline()
-    filehandle.close()
+    c = db_mLANChat.c.execute("SELECT name,IP,port from contacts")
+    for r in c:
+        contact_array[r[0]]=r[1:]
 
 
 def dump_contacts():
     """Saves the recent chats to the persistent file contacts.dat."""
     global contact_array
     try:
-        filehandle = open("data\\contacts.dat", "w")
+        db_mLANChat = LANChatDB()
     except IOError:
         print("Can't dump contacts.")
         return
+    db_mLANChat.delete_all()
     for contact in contact_array:
-        filehandle.write(
-            contact + " " + str(contact_array[contact][0]) + " " +
-            contact_array[contact][1] + "\n")
-    filehandle.close()
+        db_mLANChat.add_contact(contact
+        ,contact_array[contact][0],contact_array[contact][1])
 
 def contacts_connect(parent,item):
     """Establish a connection between two contacts."""
@@ -450,9 +448,8 @@ def QuickServer(parent):
     Server(9999,parent).start()
 
 
-def saveHistory():
+def saveHistory(parent):
     """Saves history with Tkinter's asksaveasfilename dialog."""
-    global main_body_text
     file_name = asksaveasfilename(
         title="Choose save location",
         filetypes=[('Plain text', '*.txt'), ('Any File', '*.*')])
@@ -461,7 +458,7 @@ def saveHistory():
     except IOError:
         print("Can't save history.")
         return
-    contents = main_body_text.get(1.0, END)
+    contents = parent.txtChat.get(1.0, END)
     for line in contents:
         filehandle.write(line)
     filehandle.close()
@@ -487,3 +484,15 @@ def placeText(parent,text):
     parent.writeToScreen(text, username)
     for person in conn_array:
         netThrow(parent,person, secret_array[person], text)
+
+class LANChatDB():
+    def __init__(self) -> None:
+        self.c = sqlite3.connect("LANChat.db")
+        self.c.execute("CREATE TABLE IF NOT EXISTS contacts(name TEXT,IP TEXT,port TEXT)")
+    def add_contact(self,name:str,ip:str,port:int):
+        self.c.execute(f"INSERT INTO contacts(name,IP,port) VALUES (\"{name}\",\"{ip}\",\"{port}\")")
+    def delete_all(self):
+        self.c.execute("delete from contacts")
+    def __del__(self):
+        self.c.commit()
+        self.c.close()
