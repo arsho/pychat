@@ -13,15 +13,13 @@ class Gui():
         self.txtChat = builder.get_object('txtChat')
         self.txtChat.config(state=DISABLED)
         self.entryInput = builder.get_object('entryInput')
-        self.entryInput.bind("<Return>", self.processUserText)
-        self.entryInput.bind("<KeyRelease>", self.processUserTextHighlight)
         self.statusConnect = StringVar()
         self.statusConnect.set("Connect")
         self.mainloop = self.wndMain.mainloop
         self.mnuHint = builder.get_object('mnuHint')
-        self.b.connect_callbacks(self)
         self.connector = builder.get_object('connector')
         self.contacts_window()
+        self.b.connect_callbacks(self)
 
     def on_mSave(self):
         Utils.saveHistory(self)
@@ -35,8 +33,20 @@ class Gui():
     def on_mDisconnect(self):
         self.processFlag("-001")
 
-    def complete(self, index, array):
-        self.entryInput.insert(1, array[index])
+    def on_cConnect(self):
+        item = self.listbox.get(ACTIVE).split(" ")
+        Utils.Client(item[1], int(item[2]),self).start()
+    
+    def contacts_remove(self):
+        """Remove a contact."""
+        item = self.listbox.get(ACTIVE).split(" ")
+        if self.listbox.size() != 0:
+            self.listbox.delete(ACTIVE)
+            Utils.contact_array.pop(item[1])
+
+    def complete(self, id):
+        self.entryInput.insert(1, id+" ")
+        self.entryInput.focus()
 
     def showCommandHint(self):
         """When this function invoked a popup will have shown to user
@@ -173,19 +183,10 @@ class Gui():
         connection to reuse.
         """
         self.listbox = self.b.get_object('contactListBox')
-        print(Utils.contact_array)
         for person in Utils.contact_array:
             self.listbox.insert(END, Utils.contact_array[person][1] + " " +
                                 person + " " + Utils.contact_array[person][0])
         self.listbox.pack(side=LEFT, fill=BOTH, expand=1)
-
-    def contacts_remove(self):
-        """Remove a contact."""
-        item = self.listbox.get(ACTIVE).split(" ")
-        if self.listbox.size() != 0:
-            self.listbox.delete(ACTIVE)
-    
-            h = Utils.contact_array.pop(item[1])
 
     def contacts_add(self):
         """Add a contact."""
