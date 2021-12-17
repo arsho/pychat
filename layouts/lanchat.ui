@@ -1,0 +1,220 @@
+<?xml version='1.0' encoding='utf-8'?>
+<interface version="1.1">
+  <object class="tk.Toplevel" id="mainwindow">
+    <property name="height">200</property>
+    <property name="resizable">both</property>
+    <property name="title" translatable="yes">LanChat</property>
+    <property name="width">200</property>
+    <child>
+      <object class="tk.Frame" id="frame1">
+        <property name="height">200</property>
+        <property name="width">200</property>
+        <layout manager="pack">
+          <property name="anchor">n</property>
+          <property name="expand">false</property>
+          <property name="fill">x</property>
+          <property name="propagate">True</property>
+          <property name="side">top</property>
+        </layout>
+        <child>
+          <object class="tk.Label" id="connector">
+            <property name="text" translatable="yes">disconnected</property>
+            <layout manager="pack">
+              <property name="propagate">True</property>
+              <property name="side">left</property>
+            </layout>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="tk.Frame" id="frmMain">
+        <property name="height">200</property>
+        <property name="width">200</property>
+        <layout manager="pack">
+          <property name="expand">true</property>
+          <property name="fill">both</property>
+          <property name="propagate">True</property>
+          <property name="side">left</property>
+        </layout>
+        <child>
+          <object class="pygubu.builder.widgets.tkinterscrolledtext" id="txtChat">
+            <property name="height">20</property>
+            <property name="width">30</property>
+            <layout manager="pack">
+              <property name="expand">true</property>
+              <property name="fill">both</property>
+              <property name="propagate">True</property>
+              <property name="side">top</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="tk.Frame" id="frame4">
+            <property name="height">200</property>
+            <property name="width">200</property>
+            <layout manager="pack">
+              <property name="expand">true</property>
+              <property name="fill">x</property>
+              <property name="padx">10</property>
+              <property name="pady">10</property>
+              <property name="propagate">True</property>
+              <property name="side">bottom</property>
+            </layout>
+            <child>
+              <object class="tk.Entry" id="entryInput">
+                <layout manager="pack">
+                  <property name="expand">true</property>
+                  <property name="fill">x</property>
+                  <property name="propagate">True</property>
+                  <property name="side">top</property>
+                </layout>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="tk.LabelFrame" id="Contacts">
+        <property name="height">200</property>
+        <property name="text" translatable="yes">Contacts</property>
+        <property name="width">200</property>
+        <layout manager="pack">
+          <property name="fill">y</property>
+          <property name="propagate">True</property>
+          <property name="side">right</property>
+        </layout>
+        <child>
+          <object class="pygubu.builder.widgets.tkscrollbarhelper" id="frmContacts">
+            <property name="scrolltype">both</property>
+            <property name="usemousewheel">false</property>
+            <layout manager="pack">
+              <property name="expand">true</property>
+              <property name="fill">both</property>
+              <property name="propagate">True</property>
+              <property name="side">top</property>
+            </layout>
+            <child>
+              <object class="tk.Listbox" id="contactListBox">
+                <layout manager="pack">
+                  <property name="propagate">True</property>
+                  <property name="side">top</property>
+                </layout>
+              </object>
+            </child>
+          </object>
+        </child>
+        <child>
+          <object class="tk.Button" id="add">
+            <property name="background">#45fcc5</property>
+            <property name="command" type="command" cbtype="simple">contacts_add</property>
+            <property name="text" translatable="yes">Add</property>
+            <layout manager="pack">
+              <property name="propagate">True</property>
+              <property name="side">left</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="tk.Button" id="cConnect">
+            <property name="background">#49f860</property>
+            <property name="text" translatable="yes">connect</property>
+            <layout manager="pack">
+              <property name="propagate">True</property>
+              <property name="side">left</property>
+            </layout>
+          </object>
+        </child>
+        <child>
+          <object class="tk.Button" id="remove">
+            <property name="background">#f0cc51</property>
+            <property name="command" type="command" cbtype="simple">contacts_remove</property>
+            <property name="text" translatable="yes">remove</property>
+            <layout manager="pack">
+              <property name="propagate">True</property>
+              <property name="side">top</property>
+            </layout>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="pygubu.builder.widgets.toplevelmenu" id="toolbar">
+        <child>
+          <object class="tk.Menu" id="menu1">
+            <child>
+              <object class="tk.Menuitem.Submenu" id="File">
+                <property name="label" translatable="yes">File</property>
+                <child>
+                  <object class="tk.Menuitem.Command" id="command2">
+                    <property name="command" type="command" cbtype="simple">on_mSave</property>
+                    <property name="label" translatable="yes">Save</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="tk.Menuitem.Command" id="command3">
+                    <property name="command" type="command" cbtype="simple">on_mUsername</property>
+                    <property name="label" translatable="yes">username</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="tk.Menuitem.Command" id="command4">
+                    <property name="command" type="command" cbtype="simple">on_mExit</property>
+                    <property name="label" translatable="yes">exit</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="tk.Menuitem.Submenu" id="Connect">
+                <property name="label" translatable="yes">connect</property>
+                <child>
+                  <object class="tk.Menuitem.Command" id="Connect_on_port">
+                    <property name="command" type="command" cbtype="simple">client_options_window</property>
+                    <property name="compound">top</property>
+                    <property name="label" translatable="yes">Connect on port</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="tk.Menuitem.Command" id="Disconnect">
+                    <property name="command" type="command" cbtype="simple">on_mDisconnect</property>
+                    <property name="label" translatable="yes">Disconnect</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="tk.Menuitem.Command" id="server">
+                    <property name="command" type="command" cbtype="simple">server_options_window</property>
+                    <property name="label" translatable="yes">bind server</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="tk.Menu" id="mnuHint">
+    <child>
+      <object class="tk.Menuitem.Command" id="nick">
+        <property name="label" translatable="yes">nick</property>
+      </object>
+    </child>
+    <child>
+      <object class="tk.Menuitem.Command" id="connect">
+        <property name="label" translatable="yes">connect</property>
+      </object>
+    </child>
+    <child>
+      <object class="tk.Menuitem.Command" id="disconnect">
+        <property name="label" translatable="yes">disconnect</property>
+      </object>
+    </child>
+    <child>
+      <object class="tk.Menuitem.Command" id="host">
+        <property name="label" translatable="yes">host</property>
+      </object>
+    </child>
+  </object>
+</interface>

@@ -1,0 +1,43 @@
+<?xml version='1.0' encoding='utf-8'?>
+<interface version="1.1">
+  <object class="tk.Toplevel" id="server_options">
+    <property name="height">200</property>
+    <property name="title" translatable="yes">Server options</property>
+    <property name="width">200</property>
+    <child>
+      <object class="tk.Label" id="label1">
+        <property name="anchor">nw</property>
+        <property name="compound">right</property>
+        <property name="text" translatable="yes">Port:</property>
+        <layout manager="grid">
+          <property name="column">0</property>
+          <property name="propagate">True</property>
+          <property name="row">0</property>
+        </layout>
+      </object>
+    </child>
+    <child>
+      <object class="tk.Entry" id="port">
+        <property name="text" translatable="yes">9999</property>
+        <layout manager="grid">
+          <property name="column">1</property>
+          <property name="propagate">True</property>
+          <property name="row">0</property>
+        </layout>
+      </object>
+    </child>
+    <child>
+      <object class="tk.Button" id="button1">
+        <property name="command" type="command" cbtype="simple">on_launch</property>
+        <property name="cursor">arrow</property>
+        <property name="justify">left</property>
+        <property name="text" translatable="yes">launch</property>
+        <layout manager="grid">
+          <property name="column">1</property>
+          <property name="propagate">True</property>
+          <property name="row">1</property>
+        </layout>
+      </object>
+    </child>
+  </object>
+</interface>
