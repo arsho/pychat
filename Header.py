@@ -15,6 +15,9 @@ import threading
 import socket
 import random
 import math
+import pygubu
+import pathlib
+import sqlite3
 
 strProgramName = "lanchat"
 commands = ["nick", "connect", "disconnect", "host"]
