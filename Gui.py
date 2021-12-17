@@ -24,7 +24,7 @@ class Gui():
         self.contacts_window()
 
     def on_mSave(self):
-        Utils.saveHistory()
+        Utils.saveHistory(self)
 
     def on_mUsername(self):
         Utils.username_options_window(self)
@@ -126,7 +126,7 @@ class Gui():
         global conn_array
         global secret_array
         global username_array
-        global contact_array
+
         global isCLI
         t = int(number[1:])
         if t == 1:  # disconnect
@@ -158,7 +158,7 @@ class Gui():
                 self.writeToScreen(
                     "User " + username_array[conn] + " has changed their username to " + name, "System")
                 username_array[conn] = name
-                contact_array[
+                Utils.contact_array[
                     conn.getpeername()[0]] = [conn.getpeername()[1], name]
 
     def Runner(self, conn, secret):
@@ -172,13 +172,11 @@ class Gui():
         """Displays the contacts window, allowing the user to select a recent
         connection to reuse.
         """
-        global contact_array
         self.listbox = self.b.get_object('contactListBox')
-        # self.b.get_object('cConnect').config(command=lambda: Utils.contacts_connect(
-        #     self, listbox.get(ACTIVE).split(" ")))
-        for person in contact_array:
-            self.listbox.insert(END, contact_array[person][1] + " " +
-                                person + " " + contact_array[person][0])
+        print(Utils.contact_array)
+        for person in Utils.contact_array:
+            self.listbox.insert(END, Utils.contact_array[person][1] + " " +
+                                person + " " + Utils.contact_array[person][0])
         self.listbox.pack(side=LEFT, fill=BOTH, expand=1)
 
     def contacts_remove(self):
@@ -186,8 +184,8 @@ class Gui():
         item = self.listbox.get(ACTIVE).split(" ")
         if self.listbox.size() != 0:
             self.listbox.delete(ACTIVE)
-            global contact_array
-            h = contact_array.pop(item[1])
+    
+            h = Utils.contact_array.pop(item[1])
 
     def contacts_add(self):
         """Add a contact."""
@@ -210,7 +208,7 @@ class Gui():
 
     def contacts_add_helper(self, username, ip, port, window, listbox):
         """Contact adding helper function. Recognizes invalid usernames and
-        adds contact to listbox and contact_array.
+        adds contact to listbox and Utils.contact_array.
         """
         for letter in username:
             if letter == " " or letter == "\n":
@@ -219,7 +217,7 @@ class Gui():
                 return
         if Utils.options_sanitation(self, port, ip):
             listbox.insert(END, username + " " + ip + " " + port)
-            contact_array[ip] = [port, username]
+            Utils.contact_array[ip] = [port, username]
             window.destroy()
             return
 
