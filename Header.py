@@ -20,11 +20,12 @@ import pathlib
 import sqlite3
 
 strProgramName = "lanchat"
-commands = ["nick", "connect", "disconnect", "host"]
 conn_array = []  # stores open sockets
 secret_array = dict()  # key: the open sockets in conn_array,
 # value: integers for encryption
 username_array = dict()  # key: the open sockets in conn_array,
+# value: usernames for the connection
+# key: ip address as a string, value: [port, username]
 
 username = "Self"
 
