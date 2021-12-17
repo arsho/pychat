@@ -63,6 +63,8 @@
             </layout>
             <child>
               <object class="tk.Entry" id="entryInput">
+                <bind sequence="&lt;KeyRelease&gt;" handler="processUserTextHighlight" add="" />
+                <bind sequence="&lt;Return&gt;" handler="processUserText" add="" />
                 <layout manager="pack">
                   <property name="expand">true</property>
                   <property name="fill">x</property>
@@ -119,6 +121,7 @@
         <child>
           <object class="tk.Button" id="cConnect">
             <property name="background">#49f860</property>
+            <property name="command" type="command" cbtype="simple">on_cConnect</property>
             <property name="text" translatable="yes">connect</property>
             <layout manager="pack">
               <property name="propagate">True</property>
@@ -198,21 +201,25 @@
   <object class="tk.Menu" id="mnuHint">
     <child>
       <object class="tk.Menuitem.Command" id="nick">
+        <property name="command" type="command" cbtype="with_wid">complete</property>
         <property name="label" translatable="yes">nick</property>
       </object>
     </child>
     <child>
       <object class="tk.Menuitem.Command" id="connect">
+        <property name="command" type="command" cbtype="with_wid">complete</property>
         <property name="label" translatable="yes">connect</property>
       </object>
     </child>
     <child>
       <object class="tk.Menuitem.Command" id="disconnect">
+        <property name="command" type="command" cbtype="with_wid">complete</property>
         <property name="label" translatable="yes">disconnect</property>
       </object>
     </child>
     <child>
       <object class="tk.Menuitem.Command" id="host">
+        <property name="command" type="command" cbtype="with_wid">complete</property>
         <property name="label" translatable="yes">host</property>
       </object>
     </child>
