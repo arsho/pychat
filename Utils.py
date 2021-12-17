@@ -283,10 +283,6 @@ def dump_contacts():
         db_mLANChat.add_contact(contact
         ,contact_array[contact][0],contact_array[contact][1])
 
-def contacts_connect(parent,item):
-    """Establish a connection between two contacts."""
-    Client(item[1], int(item[2]),parent).start()
-
 class Server (threading.Thread):
     "A class for a Server instance."""
 
@@ -441,12 +437,6 @@ class Client (threading.Thread):
         # Server(self.port).start()
         # ##########################################################################THIS
         # IS GOOD, BUT I CAN'T TEST ON ONE MACHINE
-
-
-def QuickServer(parent):
-    """Quickstarts a server."""
-    Server(9999,parent).start()
-
 
 def saveHistory(parent):
     """Saves history with Tkinter's asksaveasfilename dialog."""
